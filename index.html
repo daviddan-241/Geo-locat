@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GeoCloak — United States</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;padding:0;background:#f6f7fb;color:#111}
+  .wrap{max-width:820px;margin:24px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(2,6,23,0.08)}
+  h1{margin:0 0 12px;font-size:20px}
+  label{display:block;margin-top:10px;font-size:13px}
+  input,select,button,textarea{width:100%;padding:10px;border:1px solid #dcdfe6;border-radius:8px;margin-top:6px;font-size:15px}
+  .row{display:flex;gap:10px}
+  .row .col{flex:1}
+  .buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .small{font-size:13px;color:#666;margin-top:8px}
+  .note{background:#fffbe6;padding:10px;border:1px solid #ffe8a1;border-radius:8px;margin-top:12px}
+  pre{background:#0b1020;color:#9ae6ff;padding:12px;border-radius:8px;overflow:auto}
+  .success{background:#e6ffef;border:1px solid #bff0c8;padding:10px;border-radius:8px;margin-top:10px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>GeoCloak — United States defaults</h1>
+    <div class="small">Single‑page helper. Set a location/timezone and generate bookmarklets that make Safari tabs report your chosen location. Works on facebook.com in Safari. Tap Start to generate and copy your Run bookmarklet; tap Stop code to clear overrides (reload).</div>
+
+    <div class="row">
+      <div class="col">
+        <label>Latitude</label>
+        <input id="lat" type="number" step="0.000001" />
+      </div>
+      <div class="col">
+        <label>Longitude</label>
+        <input id="lng" type="number" step="0.000001" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Accuracy (meters)</label>
+        <input id="acc" type="number" value="30"/>
+      </div>
+      <div class="col">
+        <label>Timezone (IANA)</label>
+        <input id="tz" type="text" value="America/New_York"/>
+      </div>
+    </div>
+
+    <label>Languages (comma-separated)</label>
+    <input id="langs" value="en-US,en"/>
+
+    <div class="buttons">
+      <button id="startBtn">Start (copy Run bookmarklet)</button>
+      <button id="setupBtn">Copy Setup bookmarklet</button>
+      <button id="stopBtn">Copy Stop code</button>
+    </div>
+
+    <div class="note">Usage: 1) Copy Setup and Run to Safari bookmarks on your target domain (e.g., m.facebook.com). 2) Run Setup once to save config on that domain, then Run on each load to apply. 3) Stop = reload tab.</div>
+
+    <h3 style="margin-top:18px">Preview</h3>
+    <pre id="preview" style="height:210px"></pre>
+
+    <h3 style="margin-top:12px">Console</h3>
+    <pre id="console">Open devtools console. It prints a greeting for Previn and quick tips.</pre>
+
+    <div class="small">Verify: browserleaks.com/geo (coords), browserleaks.com/time (timezone).</div>
+  </div>
+<script>
+console.log('Previn: GeoCloak page loaded. Steps: fill US coords → Start to copy Run bookmarklet → add to Safari bookmark URL → run on facebook.com tab.');
+
+const id = (s)=>document.getElementById(s);
+const defaultCfg = { lat:40.7128, lng:-74.0060, acc:30, tz:'America/New_York', langs:'en-US,en' };
+function load(){
+  try{const r=localStorage.getItem('geocloak.global'); if(r){const c=JSON.parse(r); id('lat').value=c.lat; id('lng').value=c.lng; id('acc').value=c.acc; id('tz').value=c.tz; id('langs').value=c.langs; return;}}catch(e){}
+  id('lat').value=defaultCfg.lat; id('lng').value=defaultCfg.lng; id('acc').value=defaultCfg.acc; id('tz').value=defaultCfg.tz; id('langs').value=defaultCfg.langs;
+}
+load();
+
+function buildSetup(cfg){return `(function(){try{
+var key='geocloakCfg';
+var prev=null;try{prev=JSON.parse(localStorage.getItem(key)||'null');}catch(e){}
+var lat=parseFloat(prompt('GeoCloak: Latitude', prev&&prev.lat!=null?prev.lat:'${cfg.lat}')); if(isNaN(lat)) return;
+var lng=parseFloat(prompt('GeoCloak: Longitude', prev&&prev.lng!=null?prev.lng:'${cfg.lng}')); if(isNaN(lng)) return;
+var acc=parseInt(prompt('GeoCloak: Accuracy (m)', prev&&prev.acc!=null?prev.acc:'${cfg.acc}'))||${cfg.acc};
+var tz=prompt('Timezone (IANA)', prev&&prev.tz?prev.tz:'${cfg.tz}')||'${cfg.tz}';
+var langs=prompt('Languages (comma-separated)', prev&&prev.langs?prev.langs:'${cfg.langs}')||'${cfg.langs}';
+var platform='iPhone';
+var store={lat:lat,lng:lng,acc:acc,tz:tz,langs:langs,platform:platform};
+localStorage.setItem(key,JSON.stringify(store));
+alert('GeoCloak: saved for this domain.');
+}catch(e){}})();`;}
+
+function buildRun(){return `(function(){try{
+var key='geocloakCfg';
+var cfg=null;try{cfg=JSON.parse(localStorage.getItem(key)||'null');}catch(e){}
+if(!cfg){alert('GeoCloak: no saved config on this domain. Run Setup first.');return;}
+var lat=+cfg.lat,lng=+cfg.lng,acc=+cfg.acc,tz=cfg.tz,langs=cfg.langs,platform=cfg.platform||'iPhone';
+function d(o,p,v){try{Object.defineProperty(o,p,{get:function(){return v},configurable:true});}catch(e){try{o[p]=v;}catch(e){}}}
+try{d(Navigator.prototype,'language',langs.split(',')[0].trim());d(Navigator.prototype,'languages',langs.split(',').map(function(s){return s.trim()}).filter(Boolean));d(Navigator.prototype,'platform',platform);}catch(e){}
+try{if(navigator.permissions&&navigator.permissions.query){const q=navigator.permissions.query.bind(navigator.permissions);navigator.permissions.query=function(p){if(p&&p.name==='geolocation'){return Promise.resolve({state:'granted',onchange:null});}return q(p);};}}catch(e){}
+try{var geo={getCurrentPosition:function(s,e,o){var pos={coords:{latitude:+lat,longitude:+lng,accuracy:+acc,altitude:null,altitudeAccuracy:null,heading:null,speed:null},timestamp:Date.now()};if(typeof s==='function')s(pos);},watchPosition:function(s,e,o){this.getCurrentPosition(s,e,o);return Math.floor(Math.random()*1e9);},clearWatch:function(id){}};if(window.navigator&&window.navigator.geolocation){try{window.navigator.geolocation.getCurrentPosition=geo.getCurrentPosition;}catch(e){}try{window.navigator.geolocation.watchPosition=geo.watchPosition;}catch(e){}}try{Object.defineProperty(window.navigator,'geolocation',{value:geo,configurable:true});}catch(e){}}catch(e){}
+try{function tzOff(tz,d){d=d||new Date();try{var f=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});var parts=f.formatToParts(d);var m={};parts.forEach(function(p){m[p.type]=p.value;});var asUTC=Date.UTC(+m.year,+m.month-1,+m.day,+m.hour,+m.minute,+m.second);return -(asUTC-d.getTime())/60000;}catch(e){return new Date().getTimezoneOffset();}}var off=tzOff(tz,new Date());var ro=Intl.DateTimeFormat.prototype.resolvedOptions;Intl.DateTimeFormat.prototype.resolvedOptions=function(){var o=ro.apply(this,arguments);o.timeZone=tz;return o;};Date.prototype.getTimezoneOffset=function(){return off};}catch(e){}
+try{var div=document.createElement('div');div.textContent='GeoCloak run: '+lat.toFixed(5)+','+lng.toFixed(5)+' tz='+tz+' ±'+acc+'m';div.style.cssText='position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.75);color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;z-index:2147483647;';document.body.appendChild(div);setTimeout(function(){div.remove();},4000);}catch(e){}
+}catch(e){}})();`;}
+
+function buildStop(){return `(function(){location.reload();})();`;}
+
+function bm(code){return 'javascript:'+encodeURIComponent(code);}
+function refreshPreview(){const cfg={lat:id('lat').value,lng:id('lng').value,acc:id('acc').value,tz:id('tz').value,langs:id('langs').value};const setup=bm(buildSetup(cfg));const run=bm(buildRun());const stop=bm(buildStop());id('preview').textContent='SETUP bookmarklet:\n\n'+setup+'\n\nRUN bookmarklet:\n\n'+run+'\n\nSTOP code:\n\n'+stop;}
+refreshPreview();
+
+function saveDefaults(){const cfg={lat:parseFloat(id('lat').value),lng:parseFloat(id('lng').value),acc:parseInt(id('acc').value)||30,tz:id('tz').value||'America/New_York',langs:id('langs').value||'en-US,en'};localStorage.setItem('geocloak.global',JSON.stringify(cfg));}
+
+id('startBtn').addEventListener('click',()=>{saveDefaults();const run=bm(buildRun());if(navigator.clipboard){navigator.clipboard.writeText(run).then(()=>{alert('Run bookmarklet copied. Paste into Safari bookmark URL on facebook.com and tap to start.');},()=>{prompt('Copy this Run bookmarklet:',run);});}else{prompt('Copy this Run bookmarklet:',run);}refreshPreview();});
+
+id('setupBtn').addEventListener('click',()=>{saveDefaults();const cfg={lat:id('lat').value,lng:id('lng').value,acc:id('acc').value,tz:id('tz').value,langs:id('langs').value};const setup=bm(buildSetup(cfg));if(navigator.clipboard){navigator.clipboard.writeText(setup).then(()=>{alert('Setup bookmarklet copied. Paste into Safari bookmark URL and run once on target domain.');},()=>{prompt('Copy this Setup bookmarklet:',setup);});}else{prompt('Copy this Setup bookmarklet:',setup);}refreshPreview();});
+
+id('stopBtn').addEventListener('click',()=>{const stop=bm(buildStop());if(navigator.clipboard){navigator.clipboard.writeText(stop).then(()=>{alert('Stop code copied. Paste into a Safari bookmark to quickly reload tab.');},()=>{prompt('Copy this Stop code:',stop);});}else{prompt('Copy this Stop code:',stop);}refreshPreview();});
+</script>
+</body>
+</html>
