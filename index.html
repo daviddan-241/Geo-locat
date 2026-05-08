@@ -117,5 +117,94 @@ id('setupBtn').addEventListener('click',()=>{saveDefaults();const cfg={lat:id('l
 
 id('stopBtn').addEventListener('click',()=>{const stop=bm(buildStop());if(navigator.clipboard){navigator.clipboard.writeText(stop).then(()=>{alert('Stop code copied. Paste into a Safari bookmark to quickly reload tab.');},()=>{prompt('Copy this Stop code:',stop);});}else{prompt('Copy this Stop code:',stop);}refreshPreview();});
 </script>
+
+<!-- APP MODE: Non-jailbreak hardware instructions -->
+<div class="wrap">
+  <h2>App Mode (No jailbreak) — Make Facebook app use your chosen location</h2>
+  <p class="small">This section explains the recommended non-jailbreak method (external/mock GPS device) that spoofs system CoreLocation so the native Facebook app sees the US location you pick. Follow the steps below using a Bluetooth external GPS spoofer device (MFi/BLE) or a trusted GPS simulator that pairs as a location source.</p>
+
+  <label>Choose a preset US city</label>
+  <select id="appCity">
+    <option value="40.7128,-74.0060,America/New_York">New York, NY</option>
+    <option value="34.0522,-118.2437,America/Los_Angeles">Los Angeles, CA</option>
+    <option value="41.8781,-87.6298,America/Chicago">Chicago, IL</option>
+    <option value="29.7604,-95.3698,America/Chicago">Houston, TX</option>
+    <option value="33.4484,-112.0740,America/Phoenix">Phoenix, AZ</option>
+  </select>
+  <div class="buttons">
+    <button id="copyAppInstr">Copy Step-by-step App Mode Instructions</button>
+    <button id="verifyMaps">Open Apple Maps to Verify</button>
+  </div>
+  <div class="note">
+    Quick summary: buy or borrow an MFi/Bluetooth GPS spoofer (search terms: ), pair it to your iPhone, set the device to broadcast the chosen coordinates, confirm Apple Maps shows the new location, then open the Facebook app and allow location. This fools the Facebook app with no jailbreak.
+  </div>
+</div>
+<!-- end APP MODE -->
+
+
+<!-- APP MODE: Non-jailbreak hardware instructions -->
+<div class="wrap">
+  <h2>App Mode (No jailbreak) — Make Facebook app use your chosen location</h2>
+  <p class="small">This section explains the recommended non-jailbreak method (external/mock GPS device) that spoofs system CoreLocation so the native Facebook app sees the US location you pick. Follow the steps below using a Bluetooth external GPS spoofer device (MFi/BLE) or a trusted GPS simulator that pairs as a location source.</p>
+
+  <label>Choose a preset US city</label>
+  <select id="appCity">
+    <option value="40.7128,-74.0060,America/New_York">New York, NY</option>
+    <option value="34.0522,-118.2437,America/Los_Angeles">Los Angeles, CA</option>
+    <option value="41.8781,-87.6298,America/Chicago">Chicago, IL</option>
+    <option value="29.7604,-95.3698,America/Chicago">Houston, TX</option>
+    <option value="33.4484,-112.0740,America/Phoenix">Phoenix, AZ</option>
+  </select>
+  <div class="buttons">
+    <button id="copyAppInstr">Copy Step-by-step App Mode Instructions</button>
+    <button id="verifyMaps">Open Apple Maps to Verify</button>
+  </div>
+  <div class="note">
+    Quick summary: buy or borrow an MFi/Bluetooth GPS spoofer (search terms: "external GPS spoofer iPhone"), pair it to your iPhone, set the device to broadcast the chosen coordinates, confirm Apple Maps shows the new location, then open the Facebook app and allow location. This fools the Facebook app with no jailbreak.
+  </div>
+</div>
+<!-- end APP MODE -->
+
+<script>
+// App Mode helpers
+(function(){
+  var copyBtn = document.getElementById('copyAppInstr');
+  var verifyBtn = document.getElementById('verifyMaps');
+  copyBtn && copyBtn.addEventListener('click', function(){
+    var val = document.getElementById('appCity').value.split(',');
+    var lat = val[0], lng = val[1], tz = val[2];
+    var steps = ''+
+"App Mode Instructions:
+"+
+"1) Acquire an external GPS spoofer device (Bluetooth/MFi) that can broadcast chosen coordinates to iOS.
+"+
+"2) Pair the device in Settings → Bluetooth.
+"+
+"3) Using the device app, set coordinates: LAT="+lat+" LON="+lng+" and start simulation/broadcast.
+"+
+"4) Open Apple Maps on your iPhone; confirm the blue dot moves to chosen city.
+"+
+"5) In Settings → Privacy & Security → Location Services → Facebook: set Location to While Using and Precise Location ON.
+"+
+"6) Open Facebook app → Marketplace → Create listing; allow location when prompted.
+"+
+"7) When finished, stop broadcast or power off the spoofer to return to real GPS.
+
+"+
+"Note: This method does NOT require jailbreak and changes system-wide CoreLocation."
+    ;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(steps).then(function(){ alert('App Mode instructions copied to clipboard. Paste into Notes to keep them.'); }, function(){ prompt('Copy instructions:', steps); });
+    } else {
+      prompt('Copy instructions:', steps);
+    }
+  });
+  verifyBtn && verifyBtn.addEventListener('click', function(){
+    // Try opening Apple Maps; if not allowed in browser, open web maps site
+    try{ window.location = 'maps://'; } catch(e){ window.open('https://maps.apple.com/'); }
+  });
+})();
+</script>
+
 </body>
 </html>
