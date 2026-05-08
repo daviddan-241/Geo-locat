@@ -124,13 +124,38 @@ id('stopBtn').addEventListener('click',()=>{const stop=bm(buildStop());if(naviga
   <p class="small">This section explains the recommended non-jailbreak method (external/mock GPS device) that spoofs system CoreLocation so the native Facebook app sees the US location you pick. Follow the steps below using a Bluetooth external GPS spoofer device (MFi/BLE) or a trusted GPS simulator that pairs as a location source.</p>
 
   <label>Choose a preset US city</label>
-  <select id="appCity">
-    <option value="40.7128,-74.0060,America/New_York">New York, NY</option>
-    <option value="34.0522,-118.2437,America/Los_Angeles">Los Angeles, CA</option>
-    <option value="41.8781,-87.6298,America/Chicago">Chicago, IL</option>
-    <option value="29.7604,-95.3698,America/Chicago">Houston, TX</option>
-    <option value="33.4484,-112.0740,America/Phoenix">Phoenix, AZ</option>
+  <select id=appCity>
+    <option value=40.7128,-74.0060,America/New_York>New York, NY, USA</option>
+    <option value=34.0522,-118.2437,America/Los_Angeles>Los Angeles, CA, USA</option>
+    <option value=41.8781,-87.6298,America/Chicago>Chicago, IL, USA</option>
+    <option value=29.7604,-95.3698,America/Chicago>Houston, TX, USA</option>
+    <option value=33.4484,-112.0740,America/Phoenix>Phoenix, AZ, USA</option>
+    <option value=37.7749,-122.4194,America/Los_Angeles>San Francisco, CA, USA</option>
+    <option value=47.6062,-122.3321,America/Los_Angeles>Seattle, WA, USA</option>
+    <option value=39.9526,-75.1652,America/New_York>Philadelphia, PA, USA</option>
+    <option value=38.9072,-77.0369,America/New_York>Washington, DC, USA</option>
+    <option value=25.7617,-80.1918,America/New_York>Miami, FL, USA</option>
+    <option value=42.3601,-71.0589,America/New_York>Boston, MA, USA</option>
+    <option value=32.7767,-96.7970,America/Chicago>Dallas, TX, USA</option>
+    <option value=30.2672,-97.7431,America/Chicago>Austin, TX, USA</option>
+    <option value=36.1699,-115.1398,America/Los_Angeles>Las Vegas, NV, USA</option>
+    <option value=39.7392,-104.9903,America/Denver>Denver, CO, USA</option>
+    <option value=52.3702,4.8952,Europe/Amsterdam>Amsterdam, Netherlands</option>
+    <option value=51.9244,4.4777,Europe/Amsterdam>Rotterdam, Netherlands</option>
+    <option value=52.0705,4.3007,Europe/Amsterdam>The Hague, Netherlands</option>
+    <option value=52.0914,5.1116,Europe/Amsterdam>Utrecht, Netherlands</option>
+    <option value=51.4416,5.4697,Europe/Amsterdam>Eindhoven, Netherlands</option>
+    <option value=50.8503,4.3517,Europe/Brussels>Brussels, Belgium</option>
+    <option value=48.8566,2.3522,Europe/Paris>Paris, France</option>
+    <option value=51.5074,-0.1278,Europe/London>London, UK</option>
+    <option value=40.4168,-3.7038,Europe/Madrid>Madrid, Spain</option>
+    <option value=41.3851,2.1734,Europe/Madrid>Barcelona, Spain</option>
+    <option value=59.3293,18.0686,Europe/Stockholm>Stockholm, Sweden</option>
+    <option value=60.1699,24.9384,Europe/Helsinki>Helsinki, Finland</option>
+    <option value=45.4642,9.1900,Europe/Rome>Milan, Italy</option>
+    <option value=41.9028,12.4964,Europe/Rome>Rome, Italy</option>
   </select>
+
   <div class="buttons">
     <button id="copyAppInstr">Copy Step-by-step App Mode Instructions</button>
     <button id="verifyMaps">Open Apple Maps to Verify</button>
